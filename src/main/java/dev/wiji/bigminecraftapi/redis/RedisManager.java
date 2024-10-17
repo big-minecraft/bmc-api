@@ -22,7 +22,7 @@ public class RedisManager {
 		};
 	}
 
-	public void addListener(RedisListener listener) {
+	protected void addListener(RedisListener listener) {
 		JedisPubSub pubSub = new JedisPubSub() {
 			@Override
 			public void onMessage(String channel, String message) {
