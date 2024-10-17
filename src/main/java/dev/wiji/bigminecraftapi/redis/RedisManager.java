@@ -8,18 +8,9 @@ public class RedisManager {
 	private final JedisPool pool;
 	private final Jedis jedis;
 
-	private final RedisListener connectionListener;
-
 	public RedisManager() {
 		pool = new JedisPool("redis-service", 6379);
 		jedis = pool.getResource();
-
-		connectionListener = new RedisListener("connections") {
-			@Override
-			public void onMessage(String message) {
-				System.out.println("Received message: " + message);
-			}
-		};
 	}
 
 	protected void addListener(RedisListener listener) {
@@ -36,9 +27,4 @@ public class RedisManager {
 	public void publish(String channel, String message) {
 		jedis.publish(channel, message);
 	}
-
-	public RedisListener getConnectionListener() {
-		return connectionListener;
-	}
-
 }
