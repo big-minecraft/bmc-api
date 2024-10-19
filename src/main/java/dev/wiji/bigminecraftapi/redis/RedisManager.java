@@ -12,12 +12,10 @@ import java.util.Map;
 
 public class RedisManager {
 	private final JedisPool pool;
-	private final Jedis jedis;
 	private final Gson gson;
 
 	public RedisManager() {
 		pool = new JedisPool("redis-service", 6379);
-		jedis = pool.getResource();
 		gson = new Gson();
 	}
 
@@ -29,20 +27,28 @@ public class RedisManager {
 			}
 		};
 
-		jedis.subscribe(pubSub, listener.getChannel());
+		new Thread(() -> {
+			try(Jedis jedisSubscriber = pool.getResource()) {
+				jedisSubscriber.subscribe(pubSub, listener.getChannel());
+			}
+		}).start();
 	}
 
 	public void publish(String channel, String message) {
-		jedis.publish(channel, message);
+		try (Jedis jedisPublisher = pool.getResource()) {
+			jedisPublisher.publish(channel, message);
+		}
 	}
 
 	public List<MinecraftInstance> getInstances() {
 		List<MinecraftInstance> instances = new ArrayList<>();
 
-		Map<String, String> instanceStrings = jedis.hgetAll("instances");
-		for (String instance : instanceStrings.values()) {
-			MinecraftInstance minecraftInstance = gson.fromJson(instance, MinecraftInstance.class);
-			instances.add(minecraftInstance);
+		try (Jedis jedis = pool.getResource()) {
+			Map<String, String> instanceStrings = jedis.hgetAll("instances");
+			for (String instance : instanceStrings.values()) {
+				MinecraftInstance minecraftInstance = gson.fromJson(instance, MinecraftInstance.class);
+				instances.add(minecraftInstance);
+			}
 		}
 
 		return instances;
