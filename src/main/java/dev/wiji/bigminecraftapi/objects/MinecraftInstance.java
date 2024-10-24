@@ -8,13 +8,15 @@ public class MinecraftInstance {
 
 	private final String uid;
 	private final String name;
+	private final String podName;
 	private final String ip;
 	private final List<UUID> players;
 
-	public MinecraftInstance(String uid, String name, String ip) {
+	public MinecraftInstance(String uid, String name, String podName, String ip) {
 		this.uid = uid;
 		this.name = name;
 		this.ip = ip;
+		this.podName = podName;
 
 		this.players = new ArrayList<>();
 	}
@@ -25,6 +27,10 @@ public class MinecraftInstance {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getPodName() {
+		return podName;
 	}
 
 	public String getIp() {
