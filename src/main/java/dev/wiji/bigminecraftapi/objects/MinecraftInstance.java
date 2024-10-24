@@ -11,14 +11,16 @@ public class MinecraftInstance {
 	private final String podName;
 	private final String ip;
 	private final String gamemode;
+	private final boolean initialServer;
 	private final List<UUID> players;
 
-	public MinecraftInstance(String uid, String name, String podName, String ip, String gamemode) {
+	public MinecraftInstance(String uid, String name, String podName, String ip, String gamemode, boolean initialServer) {
 		this.uid = uid;
 		this.name = name;
 		this.ip = ip;
 		this.podName = podName;
 		this.gamemode = gamemode;
+		this.initialServer = initialServer;
 
 		this.players = new ArrayList<>();
 	}
@@ -45,6 +47,10 @@ public class MinecraftInstance {
 
 	public String getGamemode() {
 		return gamemode;
+	}
+
+	public boolean isInitialServer() {
+		return initialServer;
 	}
 
 }
