@@ -10,13 +10,15 @@ public class MinecraftInstance {
 	private final String name;
 	private final String podName;
 	private final String ip;
+	private final String gamemode;
 	private final List<UUID> players;
 
-	public MinecraftInstance(String uid, String name, String podName, String ip) {
+	public MinecraftInstance(String uid, String name, String podName, String ip, String gamemode) {
 		this.uid = uid;
 		this.name = name;
 		this.ip = ip;
 		this.podName = podName;
+		this.gamemode = gamemode;
 
 		this.players = new ArrayList<>();
 	}
@@ -39,6 +41,10 @@ public class MinecraftInstance {
 
 	public List<UUID> getPlayers() {
 		return players;
+	}
+
+	public String getGamemode() {
+		return gamemode;
 	}
 
 }
