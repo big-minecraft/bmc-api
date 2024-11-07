@@ -78,4 +78,8 @@ public class RedisManager {
 	public boolean isPlayerConnected(UUID player) {
 		return getPlayers().containsKey(player);
 	}
+
+	public void queuePlayer(UUID player, String gamemode) {
+		publish("queue-player", player.toString() + ":" + gamemode);
+	}
 }
