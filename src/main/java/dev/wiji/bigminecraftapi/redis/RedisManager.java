@@ -6,9 +6,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RedisManager {
 	private final JedisPool pool;
@@ -52,5 +50,32 @@ public class RedisManager {
 		}
 
 		return instances;
+	}
+
+	public List<MinecraftInstance> getProxies() {
+		List<MinecraftInstance> proxies = new ArrayList<>();
+
+		try (Jedis jedis = pool.getResource()) {
+			Map<String, String> proxyStrings = jedis.hgetAll("proxies");
+			for (String instance : proxyStrings.values()) {
+				MinecraftInstance proxy = gson.fromJson(instance, MinecraftInstance.class);
+				proxies.add(proxy);
+			}
+		}
+
+		return proxies;
+	}
+
+	public Map<UUID, String> getPlayers() {
+		List<MinecraftInstance> proxies = getProxies();
+		Map<UUID, String> players = new HashMap<>();
+
+		for (MinecraftInstance proxy : proxies) players.putAll(proxy.getPlayers());
+
+		return players;
+	}
+
+	public boolean isPlayerConnected(UUID player) {
+		return getPlayers().containsKey(player);
 	}
 }
