@@ -1,47 +1,27 @@
-package dev.wiji.bigminecraftapi.redis;
+package dev.wiji.bigminecraftapi.controllers;
 
 import com.google.gson.Gson;
+import dev.wiji.bigminecraftapi.BigMinecraftAPI;
+import dev.wiji.bigminecraftapi.enums.InstanceState;
+import dev.wiji.bigminecraftapi.enums.RedisChannel;
 import dev.wiji.bigminecraftapi.objects.MinecraftInstance;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPubSub;
 
 import java.util.*;
 
-public class RedisManager {
-	private final JedisPool pool;
+public class NetworkManager {
 	private final Gson gson;
 
-	public RedisManager() {
-		pool = new JedisPool("redis-service", 6379);
+	public NetworkManager() {
 		gson = new Gson();
 	}
 
-	protected void addListener(RedisListener listener) {
-		JedisPubSub pubSub = new JedisPubSub() {
-			@Override
-			public void onMessage(String channel, String message) {
-				listener.onMessage(message);
-			}
-		};
-
-		new Thread(() -> {
-			try(Jedis jedisSubscriber = pool.getResource()) {
-				jedisSubscriber.subscribe(pubSub, listener.getChannel());
-			}
-		}).start();
-	}
-
-	public void publish(String channel, String message) {
-		try (Jedis jedisPublisher = pool.getResource()) {
-			jedisPublisher.publish(channel, message);
-		}
-	}
-
 	public List<MinecraftInstance> getInstances() {
+		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+
 		List<MinecraftInstance> instances = new ArrayList<>();
 
-		try (Jedis jedis = pool.getResource()) {
+		try (Jedis jedis = redisManager.pool.getResource()) {
 			Map<String, String> instanceStrings = jedis.hgetAll("instances");
 			for (String instance : instanceStrings.values()) {
 				MinecraftInstance minecraftInstance = gson.fromJson(instance, MinecraftInstance.class);
@@ -53,9 +33,11 @@ public class RedisManager {
 	}
 
 	public List<MinecraftInstance> getProxies() {
+		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+
 		List<MinecraftInstance> proxies = new ArrayList<>();
 
-		try (Jedis jedis = pool.getResource()) {
+		try (Jedis jedis = redisManager.pool.getResource()) {
 			Map<String, String> proxyStrings = jedis.hgetAll("proxies");
 			for (String instance : proxyStrings.values()) {
 				MinecraftInstance proxy = gson.fromJson(instance, MinecraftInstance.class);
@@ -80,6 +62,13 @@ public class RedisManager {
 	}
 
 	public void queuePlayer(UUID player, String gamemode) {
-		publish("queue-player", player.toString() + ":" + gamemode);
+		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+		redisManager.publish(RedisChannel.QUEUE_PLAYER.getRef(), player.toString() + ":" + gamemode);
 	}
+
+	public static void setInstanceState(InstanceState state) {
+		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+		redisManager.publish(RedisChannel.INSTANCE_STATE_CHANGE.getRef(), state.name());
+	}
+
 }

@@ -1,5 +1,7 @@
 package dev.wiji.bigminecraftapi.objects;
 
+import dev.wiji.bigminecraftapi.enums.InstanceState;
+
 import java.util.*;
 
 public class MinecraftInstance {
@@ -10,6 +12,9 @@ public class MinecraftInstance {
 	private final String ip;
 	private final String gamemode;
 	private final boolean initialServer;
+
+	private InstanceState state;
+
 	private final Map<UUID, String> players;
 
 	public MinecraftInstance(String uid, String name, String podName, String ip, String gamemode, boolean initialServer) {
@@ -19,6 +24,9 @@ public class MinecraftInstance {
 		this.podName = podName;
 		this.gamemode = gamemode;
 		this.initialServer = initialServer;
+
+		this.state = InstanceState.RUNNING;
+		//TODO: Make this configurable so that instances have to manually report when they are started
 
 		this.players = new HashMap<>();
 	}
@@ -47,6 +55,10 @@ public class MinecraftInstance {
 		return initialServer;
 	}
 
+	public InstanceState getState() {
+		return state;
+	}
+
 	public Map<UUID, String> getPlayers() {
 		return players;
 	}
@@ -68,4 +80,7 @@ public class MinecraftInstance {
 		this.players.putAll(players);
 	}
 
+	public void setState(InstanceState state) {
+		this.state = state;
+	}
 }
