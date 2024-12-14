@@ -13,6 +13,7 @@ public enum RedisChannel {
 	INSTANCE_STATE_CHANGE("instance-state-change"),
 	PROXY_REGISTER("proxy-register"),
 	DEPLOYMENT_MODIFIED("deployment-modified"),
+	PROXY_MODIFIED("proxy-modified"),
 	;
 
 	private final String ref;
