@@ -61,9 +61,9 @@ public class NetworkManager {
 		return getPlayers().containsKey(player);
 	}
 
-	public void queuePlayer(UUID player, String gamemode) {
+	public void queuePlayer(UUID player, String deployment) {
 		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
-		redisManager.publish(RedisChannel.QUEUE_PLAYER.getRef(), player.toString() + ":" + gamemode);
+		redisManager.publish(RedisChannel.QUEUE_PLAYER.getRef(), player.toString() + ":" + deployment);
 	}
 
 	public static void setInstanceState(InstanceState state) {
