@@ -26,7 +26,6 @@ public class MinecraftInstance {
 		this.initialServer = initialServer;
 
 		this.state = InstanceState.RUNNING;
-		//TODO: Make this configurable so that instances have to manually report when they are started
 
 		this.players = new HashMap<>();
 	}
