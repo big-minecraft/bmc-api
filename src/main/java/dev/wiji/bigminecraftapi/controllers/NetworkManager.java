@@ -6,6 +6,8 @@ import dev.wiji.bigminecraftapi.enums.InstanceState;
 import dev.wiji.bigminecraftapi.enums.RedisChannel;
 import dev.wiji.bigminecraftapi.objects.MinecraftInstance;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Response;
+import redis.clients.jedis.Transaction;
 
 import java.util.*;
 
@@ -34,14 +36,29 @@ public class NetworkManager {
 
 	public List<MinecraftInstance> getProxies() {
 		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
-
 		List<MinecraftInstance> proxies = new ArrayList<>();
 
 		try (Jedis jedis = redisManager.pool.getResource()) {
-			Map<String, String> proxyStrings = jedis.hgetAll("proxies");
-			for (String instance : proxyStrings.values()) {
-				MinecraftInstance proxy = gson.fromJson(instance, MinecraftInstance.class);
-				proxies.add(proxy);
+			jedis.watch("proxies");
+			Transaction transaction = jedis.multi();
+			Response<Map<String, String>> response = transaction.hgetAll("proxies");
+			List<Object> results = transaction.exec();
+
+			if (results == null) {
+				return getProxies();
+			}
+
+			Map<String, String> proxyStrings = response.get();
+			for (Map.Entry<String, String> entry : proxyStrings.entrySet()) {
+				try {
+					MinecraftInstance proxy = gson.fromJson(entry.getValue(), MinecraftInstance.class);
+					if (proxy != null) {
+						proxies.add(proxy);
+					}
+				} catch (Exception e) {
+					System.err.println("Error parsing proxy data for key: " + entry.getKey());
+					e.printStackTrace();
+				}
 			}
 		}
 
