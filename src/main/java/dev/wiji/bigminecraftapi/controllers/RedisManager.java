@@ -12,7 +12,7 @@ public class RedisManager {
 		pool = new JedisPool("redis-service", 6379);
 	}
 
-	protected void addListener(RedisListener listener) {
+	void addListener(RedisListener listener) {
 		JedisPubSub pubSub = new JedisPubSub() {
 			@Override
 			public void onMessage(String channel, String message) {
