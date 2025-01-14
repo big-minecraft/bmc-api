@@ -23,7 +23,7 @@ public class NetworkManager {
 
 		List<MinecraftInstance> instances = new ArrayList<>();
 
-		try (Jedis jedis = redisManager.pool.getResource()) {
+		try (Jedis jedis = redisManager.commandPool.getResource()) {
 			Map<String, String> instanceStrings = jedis.hgetAll("instances");
 			for (String instance : instanceStrings.values()) {
 				MinecraftInstance minecraftInstance = gson.fromJson(instance, MinecraftInstance.class);
@@ -36,29 +36,14 @@ public class NetworkManager {
 
 	public List<MinecraftInstance> getProxies() {
 		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+
 		List<MinecraftInstance> proxies = new ArrayList<>();
 
-		try (Jedis jedis = redisManager.pool.getResource()) {
-			jedis.watch("proxies");
-			Transaction transaction = jedis.multi();
-			Response<Map<String, String>> response = transaction.hgetAll("proxies");
-			List<Object> results = transaction.exec();
-
-			if (results == null) {
-				return getProxies();
-			}
-
-			Map<String, String> proxyStrings = response.get();
-			for (Map.Entry<String, String> entry : proxyStrings.entrySet()) {
-				try {
-					MinecraftInstance proxy = gson.fromJson(entry.getValue(), MinecraftInstance.class);
-					if (proxy != null) {
-						proxies.add(proxy);
-					}
-				} catch (Exception e) {
-					System.err.println("Error parsing proxy data for key: " + entry.getKey());
-					e.printStackTrace();
-				}
+		try (Jedis jedis = redisManager.getCommandPool().getResource()) { // Use command pool
+			Map<String, String> proxyStrings = jedis.hgetAll("proxies");
+			for (String instance : proxyStrings.values()) {
+				MinecraftInstance proxy = gson.fromJson(instance, MinecraftInstance.class);
+				proxies.add(proxy);
 			}
 		}
 

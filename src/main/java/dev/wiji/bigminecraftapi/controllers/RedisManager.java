@@ -7,10 +7,12 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
 
 public class RedisManager {
-	protected final JedisPool pool;
+	protected final JedisPool commandPool;
+	protected final JedisPool subscriberPool;
 
 	public RedisManager(ApiSettings settings) {
-		pool = new JedisPool(settings.getRedisHost(), settings.getRedisPort());
+		commandPool = new JedisPool(settings.getRedisHost(), settings.getRedisPort());
+		subscriberPool = new JedisPool(settings.getRedisHost(), settings.getRedisPort());
 	}
 
 	public void addListener(RedisListener listener) {
@@ -22,21 +24,34 @@ public class RedisManager {
 		};
 
 		new Thread(() -> {
-			try(Jedis jedisSubscriber = pool.getResource()) {
+			try (Jedis jedisSubscriber = subscriberPool.getResource()) {
 				jedisSubscriber.subscribe(pubSub, listener.getChannel());
 			}
 		}).start();
 	}
 
 	public void publish(RedisChannel channel, String message) {
-		try (Jedis jedisPublisher = pool.getResource()) {
+		try (Jedis jedisPublisher = commandPool.getResource()) {
 			jedisPublisher.publish(channel.getRef(), message);
 		}
 	}
 
 	public void publish(String channel, String message) {
-		try (Jedis jedisPublisher = pool.getResource()) {
+		try (Jedis jedisPublisher = commandPool.getResource()) {
 			jedisPublisher.publish(channel, message);
+		}
+	}
+
+	public JedisPool getCommandPool() {
+		return commandPool;
+	}
+
+	public void close() {
+		if (commandPool != null) {
+			commandPool.close();
+		}
+		if (subscriberPool != null) {
+			subscriberPool.close();
 		}
 	}
 }
