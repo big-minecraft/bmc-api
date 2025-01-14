@@ -10,23 +10,22 @@ public class MinecraftInstance {
 	private final String name;
 	private final String podName;
 	private final String ip;
-	private final String gamemode;
+	private final String deployment;
 	private final boolean initialServer;
 
 	private InstanceState state;
 
 	private final Map<UUID, String> players;
 
-	public MinecraftInstance(String uid, String name, String podName, String ip, String gamemode, boolean initialServer) {
+	public MinecraftInstance(String uid, String name, String podName, String ip, String deployment, boolean initialServer) {
 		this.uid = uid;
 		this.name = name;
 		this.ip = ip;
 		this.podName = podName;
-		this.gamemode = gamemode;
+		this.deployment = deployment;
 		this.initialServer = initialServer;
 
 		this.state = InstanceState.RUNNING;
-		//TODO: Make this configurable so that instances have to manually report when they are started
 
 		this.players = new HashMap<>();
 	}
@@ -47,8 +46,8 @@ public class MinecraftInstance {
 		return ip;
 	}
 
-	public String getGamemode() {
-		return gamemode;
+	public String getDeployment() {
+		return deployment;
 	}
 
 	public boolean isInitialServer() {

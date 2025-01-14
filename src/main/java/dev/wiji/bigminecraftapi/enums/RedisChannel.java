@@ -12,7 +12,7 @@ public enum RedisChannel {
 	INITIAL_INSTANCE_RESPONSE("initial-instance-response"),
 	INSTANCE_STATE_CHANGE("instance-state-change"),
 	PROXY_REGISTER("proxy-register"),
-	GAMEMODE_MODIFIED("gamemode-modified"),
+	DEPLOYMENT_MODIFIED("deployment-modified"),
 	PROXY_MODIFIED("proxy-modified"),
 	;
 
