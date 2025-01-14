@@ -4,6 +4,7 @@ import dev.wiji.bigminecraftapi.enums.RedisChannel;
 import dev.wiji.bigminecraftapi.objects.ApiSettings;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
 public class RedisManager {
@@ -11,8 +12,13 @@ public class RedisManager {
 	protected final JedisPool subscriberPool;
 
 	public RedisManager(ApiSettings settings) {
-		commandPool = new JedisPool(settings.getRedisHost(), settings.getRedisPort());
-		subscriberPool = new JedisPool(settings.getRedisHost(), settings.getRedisPort());
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+		poolConfig.setMaxTotal(100);
+		poolConfig.setMaxIdle(20);
+		poolConfig.setMinIdle(5);
+
+		commandPool = new JedisPool(poolConfig, settings.getRedisHost(), settings.getRedisPort());
+		subscriberPool = new JedisPool(poolConfig, settings.getRedisHost(), settings.getRedisPort());
 	}
 
 	public void addListener(RedisListener listener) {
