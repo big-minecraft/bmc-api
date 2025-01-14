@@ -13,8 +13,6 @@ public abstract class RedisListener {
 
 	public RedisListener(String channel) {
 		this.channel = channel;
-
-		BigMinecraftAPI.getRedisManager().addListener(this);
 	}
 
 	public abstract void onMessage(String message);
