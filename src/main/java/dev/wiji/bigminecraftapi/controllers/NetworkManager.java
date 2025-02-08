@@ -61,6 +61,19 @@ public class NetworkManager {
 		return players;
 	}
 
+	public Map<UUID, String> getPlayers(String deployment) {
+		List<MinecraftInstance> deployments = getInstances();
+		Map<UUID, String> players = new HashMap<>();
+
+		for (MinecraftInstance instance : deployments) {
+			if (instance.getDeployment().equals(deployment)) {
+				players.putAll(instance.getPlayers());
+			}
+		}
+
+		return players;
+	}
+
 	public boolean isPlayerConnected(UUID player) {
 		return getPlayers().containsKey(player);
 	}
