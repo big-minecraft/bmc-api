@@ -9,6 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
+import java.net.InetAddress;
 import java.util.*;
 
 public class NetworkManager {
@@ -70,7 +71,11 @@ public class NetworkManager {
 
 	public static void setInstanceState(InstanceState state) {
 		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
-		redisManager.publish(RedisChannel.INSTANCE_STATE_CHANGE.getRef(), state.name());
+		String ipAddress = InetAddress.getLoopbackAddress().getHostAddress();
+		System.out.println("Setting state to " + state.name());
+		System.out.println("IP Address: " + ipAddress);
+
+		redisManager.publish(RedisChannel.INSTANCE_STATE_CHANGE.getRef(), ipAddress + ":" + state.name());
 	}
 
 }
