@@ -5,7 +5,7 @@ import java.util.*;
 public class MinecraftInstance extends Instance {
 	private final Map<UUID, String> players;
 
-	public MinecraftInstance(String uid, String name, String podName, String ip, String deployment, boolean initialServer) {
+	public MinecraftInstance(String uid, String name, String podName, String ip, String deployment) {
 		super(uid, name, podName, ip, deployment);
 
 		this.players = new HashMap<>();
