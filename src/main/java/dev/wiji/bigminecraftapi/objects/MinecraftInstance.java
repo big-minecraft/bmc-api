@@ -2,20 +2,13 @@ package dev.wiji.bigminecraftapi.objects;
 
 import java.util.*;
 
-public class MinecraftInstance extends Instance{
-
-	private final boolean initialServer;
+public class MinecraftInstance extends Instance {
 	private final Map<UUID, String> players;
 
 	public MinecraftInstance(String uid, String name, String podName, String ip, String deployment, boolean initialServer) {
 		super(uid, name, podName, ip, deployment);
 
-		this.initialServer = initialServer;
 		this.players = new HashMap<>();
-	}
-
-	public boolean isInitialServer() {
-		return initialServer;
 	}
 
 	public Map<UUID, String> getPlayers() {
