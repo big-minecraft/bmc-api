@@ -1,4 +1,4 @@
-package dev.wiji.bigminecraftapi.objects;
+package dev.kyriji.bigminecraftapi.objects;
 
 public class ApiSettings {
 	private String redisHost;

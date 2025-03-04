@@ -1,13 +1,11 @@
-package dev.wiji.bigminecraftapi.controllers;
+package dev.kyriji.bigminecraftapi.controllers;
 
 import com.google.gson.Gson;
-import dev.wiji.bigminecraftapi.BigMinecraftAPI;
-import dev.wiji.bigminecraftapi.enums.InstanceState;
-import dev.wiji.bigminecraftapi.enums.RedisChannel;
-import dev.wiji.bigminecraftapi.objects.MinecraftInstance;
+import dev.kyriji.bigminecraftapi.BigMinecraftAPI;
+import dev.kyriji.bigminecraftapi.enums.InstanceState;
+import dev.kyriji.bigminecraftapi.enums.RedisChannel;
+import dev.kyriji.bigminecraftapi.objects.MinecraftInstance;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Response;
-import redis.clients.jedis.Transaction;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -22,12 +20,29 @@ public class NetworkManager {
 
 	public List<MinecraftInstance> getInstances() {
 		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
-
 		List<MinecraftInstance> instances = new ArrayList<>();
 
 		try (Jedis jedis = redisManager.commandPool.getResource()) {
-			Map<String, String> instanceStrings = jedis.hgetAll("instances");
-			for (String instance : instanceStrings.values()) {
+			Set<String> keys = jedis.keys("*");
+
+			for(String key : keys) {
+				if(key.equals("proxy")) continue;
+				instances.addAll(getInstances(key));
+			}
+		}
+
+		return instances;
+	}
+
+
+	public List<MinecraftInstance> getInstances(String deployment) {
+		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+
+		List<MinecraftInstance> instances = new ArrayList<>();
+
+		try (Jedis jedis = redisManager.getCommandPool().getResource()) {
+			Map<String, String> instanceStrings = jedis.hgetAll(deployment);
+			for(String instance : instanceStrings.values()) {
 				MinecraftInstance minecraftInstance = gson.fromJson(instance, MinecraftInstance.class);
 				instances.add(minecraftInstance);
 			}
@@ -37,38 +52,19 @@ public class NetworkManager {
 	}
 
 	public List<MinecraftInstance> getProxies() {
-		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
-
-		List<MinecraftInstance> proxies = new ArrayList<>();
-
-		try (Jedis jedis = redisManager.getCommandPool().getResource()) { // Use command pool
-			Map<String, String> proxyStrings = jedis.hgetAll("proxies");
-			for (String instance : proxyStrings.values()) {
-				MinecraftInstance proxy = gson.fromJson(instance, MinecraftInstance.class);
-				proxies.add(proxy);
-			}
-		}
-
-		return proxies;
+		return getInstances("proxy");
 	}
 
 	public Map<UUID, String> getPlayers() {
-		List<MinecraftInstance> proxies = getProxies();
-		Map<UUID, String> players = new HashMap<>();
-
-		for (MinecraftInstance proxy : proxies) players.putAll(proxy.getPlayers());
-
-		return players;
+		return getPlayers("proxy");
 	}
 
 	public Map<UUID, String> getPlayers(String deployment) {
-		List<MinecraftInstance> deployments = getInstances();
+		List<MinecraftInstance> deployments = getInstances(deployment);
 		Map<UUID, String> players = new HashMap<>();
 
-		for (MinecraftInstance instance : deployments) {
-			if (instance.getDeployment().equals(deployment)) {
-				players.putAll(instance.getPlayers());
-			}
+		for(MinecraftInstance instance : deployments) {
+			players.putAll(instance.getPlayers());
 		}
 
 		return players;

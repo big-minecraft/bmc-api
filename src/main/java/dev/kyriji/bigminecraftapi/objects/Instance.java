@@ -1,6 +1,6 @@
-package dev.wiji.bigminecraftapi.objects;
+package dev.kyriji.bigminecraftapi.objects;
 
-import dev.wiji.bigminecraftapi.enums.InstanceState;
+import dev.kyriji.bigminecraftapi.enums.InstanceState;
 
 public class Instance {
 

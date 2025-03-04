@@ -1,9 +1,8 @@
-package dev.wiji.bigminecraftapi;
+package dev.kyriji.bigminecraftapi;
 
-import dev.wiji.bigminecraftapi.controllers.NetworkManager;
-import dev.wiji.bigminecraftapi.enums.InstanceState;
-import dev.wiji.bigminecraftapi.controllers.RedisManager;
-import dev.wiji.bigminecraftapi.objects.ApiSettings;
+import dev.kyriji.bigminecraftapi.controllers.NetworkManager;
+import dev.kyriji.bigminecraftapi.controllers.RedisManager;
+import dev.kyriji.bigminecraftapi.objects.ApiSettings;
 
 public class BigMinecraftAPI {
 	private static RedisManager redisManager;

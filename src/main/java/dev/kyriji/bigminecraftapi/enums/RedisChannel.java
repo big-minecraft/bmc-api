@@ -1,4 +1,4 @@
-package dev.wiji.bigminecraftapi.enums;
+package dev.kyriji.bigminecraftapi.enums;
 
 public enum RedisChannel {
 

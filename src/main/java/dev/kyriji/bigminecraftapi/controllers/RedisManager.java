@@ -1,7 +1,7 @@
-package dev.wiji.bigminecraftapi.controllers;
+package dev.kyriji.bigminecraftapi.controllers;
 
-import dev.wiji.bigminecraftapi.enums.RedisChannel;
-import dev.wiji.bigminecraftapi.objects.ApiSettings;
+import dev.kyriji.bigminecraftapi.enums.RedisChannel;
+import dev.kyriji.bigminecraftapi.objects.ApiSettings;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

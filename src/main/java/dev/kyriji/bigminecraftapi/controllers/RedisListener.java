@@ -1,7 +1,6 @@
-package dev.wiji.bigminecraftapi.controllers;
+package dev.kyriji.bigminecraftapi.controllers;
 
-import dev.wiji.bigminecraftapi.BigMinecraftAPI;
-import dev.wiji.bigminecraftapi.enums.RedisChannel;
+import dev.kyriji.bigminecraftapi.enums.RedisChannel;
 
 public abstract class RedisListener {
 
