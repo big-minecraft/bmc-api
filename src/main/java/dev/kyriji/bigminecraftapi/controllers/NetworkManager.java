@@ -24,19 +24,7 @@ public class NetworkManager {
 	}
 
 	public List<MinecraftInstance> getInstances() {
-		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
-		List<MinecraftInstance> instances = new ArrayList<>();
-
-		try (Jedis jedis = redisManager.commandPool.getResource()) {
-			Set<String> keys = jedis.keys("*");
-
-			for(String key : keys) {
-				if(key.equals("proxy")) continue;
-				instances.addAll(getInstances(key));
-			}
-		}
-
-		return instances;
+		return getInstances("*");
 	}
 
 	public List<MinecraftInstance> getInstances(String deploymentName) {
