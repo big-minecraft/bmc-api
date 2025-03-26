@@ -97,6 +97,15 @@ public class NetworkManager {
 		redisManager.publish(RedisChannel.QUEUE_PLAYER.getRef(), player.toString() + ":" + deployment);
 	}
 
+	public void transferPlayer(UUID player, MinecraftInstance instance) {
+		transferPlayer(player, instance.getIp());
+	}
+
+	public void transferPlayer(UUID player, String ip) {
+		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
+		redisManager.publish(RedisChannel.TRANSFER_PLAYER.getRef(), player.toString() + ":" + ip);
+	}
+
 	public static void setInstanceState(InstanceState state) {
 		RedisManager redisManager = BigMinecraftAPI.getRedisManager();
 

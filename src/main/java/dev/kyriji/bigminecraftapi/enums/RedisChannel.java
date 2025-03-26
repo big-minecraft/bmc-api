@@ -4,6 +4,7 @@ public enum RedisChannel {
 
 	QUEUE_PLAYER("queue-player"),
 	QUEUE_RESPONSE("queue-response"),
+	TRANSFER_PLAYER("transfer-player"),
 	INSTANCE_MODIFIED("instance-modified"),
 	PROXY_CONNECT("proxy-connect"),
 	PROXY_DISCONNECT("proxy-disconnect"),
